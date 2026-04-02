@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 200
+
+// Convert to lowercase
+void toLower(char *str) {
+    for(int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
+// Count matches of keywords in input
+int matchScore(char *input, char *keywords[], int size) {
+    int score = 0;
+    for(int i = 0; i < size; i++) {
+        if(strstr(input, keywords[i]) != NULL) {
+            score++;
+        }
+    }
+    return score;
+}
+
+int main() {
+    char input[MAX];
+
+    // 🔹 Intent keyword "training data"
+    char *admission[] = {"admission","apply","enroll","join","registration"};
+    char *exams[] = {"exam","test","midterm","final","paper"};
+    char *timetable[] = {"timetable","schedule","class","timing","routine"};
+    char *hostel[] = {"hostel","accommodation","room","stay"};
+    char *scholarships[] = {"scholarship","financial aid","discount","grant"};
+    char *fees[] = {"fees","fee","tuition","cost","payment"};
+    char *contact[] = {"contact","phone","call","email","number"};
+
+    printf("Intent Classifier Chatbot (type 'exit' to quit)\n\n");
+
+    while(1) {
+        printf("You: ");
+        fgets(input, sizeof(input), stdin);
+        input[strcspn(input, "\n")] = 0;
+
+        toLower(input);
+
+        if(strcmp(input, "exit") == 0) break;
+
+        // 🔹 Calculate scores
+        int score_adm = matchScore(input, admission, 5);
+        int score_exam = matchScore(input, exams, 5);
+        int score_time = matchScore(input, timetable, 5);
+        int score_hostel = matchScore(input, hostel, 4);
+        int score_sch = matchScore(input, scholarships, 4);
+        int score_fee = matchScore(input, fees, 5);
+        int score_contact = matchScore(input, contact, 5);
+
+        // 🔹 Find max score
+        int max = score_adm;
+        char *intent = "Admission";
+
+        if(score_exam > max) { max = score_exam; intent = "Exams"; }
+        if(score_time > max) { max = score_time; intent = "Timetable"; }
+        if(score_hostel > max) { max = score_hostel; intent = "Hostel"; }
+        if(score_sch > max) { max = score_sch; intent = "Scholarships"; }
+        if(score_fee > max) { max = score_fee; intent = "Fees"; }
+        if(score_contact > max) { max = score_contact; intent = "Contact"; }
+
+        // 🔹 Output
+        if(max == 0) {
+            printf("Chatbot: Sorry, I couldn't understand your query.\n");
+        } else {
+            printf("Chatbot: Detected Intent → %s\n", intent);
+        }
+    }
+
+    return 0;
+}
