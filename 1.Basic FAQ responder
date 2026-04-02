@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char input[200];
+
+    printf("Welcome to Institute Chatbot!\n");
+    printf("Type your question (or type 'exit' to quit)\n\n");
+
+    while (1) {
+        printf("You: ");
+        fgets(input, sizeof(input), stdin);
+
+        // remove newline
+        input[strcspn(input, "\n")] = 0;
+
+        // exit condition
+        if (strcmp(input, "exit") == 0) {
+            printf("Chatbot: Thank you! Goodbye.\n");
+            break;
+        }
+
+        // Rule-based responses
+        if (strstr(input, "timing") || strstr(input, "hours")) {
+            printf("Chatbot: Our institute is open from 9 AM to 5 PM (Monday to Friday).\n");
+        }
+        else if (strstr(input, "fees") || strstr(input, "cost")) {
+            printf("Chatbot: The course fees vary from ₹20,000 to ₹50,000 depending on the program.\n");
+        }
+        else if (strstr(input, "courses")) {
+            printf("Chatbot: We offer courses in Computer Science, AI, Data Science, and Cybersecurity.\n");
+        }
+        else if (strstr(input, "contact") || strstr(input, "phone")) {
+            printf("Chatbot: You can contact us at +91-9876543210.\n");
+        }
+        else if (strstr(input, "email")) {
+            printf("Chatbot: Our email is info@institute.com.\n");
+        }
+        else if (strstr(input, "location") || strstr(input, "address")) {
+            printf("Chatbot: We are located in Pune, Maharashtra.\n");
+        }
+        else if (strstr(input, "admission")) {
+            printf("Chatbot: Admissions are open! Visit our website or office to apply.\n");
+        }
+        else if (strstr(input, "hostel")) {
+            printf("Chatbot: Yes, hostel facilities are available for students.\n");
+        }
+        else if (strstr(input, "faculty") || strstr(input, "teachers")) {
+            printf("Chatbot: Our faculty members are highly qualified and experienced.\n");
+        }
+        else if (strstr(input, "placement")) {
+            printf("Chatbot: We provide placement assistance with top companies.\n");
+        }
+        else if (strstr(input, "library")) {
+            printf("Chatbot: Yes, we have a well-equipped library.\n");
+        }
+        else if (strstr(input, "holiday")) {
+            printf("Chatbot: We follow all national holidays and Sundays are off.\n");
+        }
+        else if (strstr(input, "certificate")) {
+            printf("Chatbot: Yes, certificates are provided after course completion.\n");
+        }
+        else if (strstr(input, "duration")) {
+            printf("Chatbot: Course duration ranges from 3 months to 1 year.\n");
+        }
+        else {
+            printf("Chatbot: Sorry, I didn't understand your question.\n");
+        }
+    }
+
+    return 0;
+}
