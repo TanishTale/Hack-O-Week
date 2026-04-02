@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 200
+
+// Convert to lowercase
+void toLowerCase(char *str) {
+    for(int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
+// Check if input contains any keyword from a group
+int containsKeyword(char *input, char *keywords[], int size) {
+    for(int i = 0; i < size; i++) {
+        if(strstr(input, keywords[i]) != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    char input[MAX];
+
+    // 🔹 Synonym groups
+    char *timing_keywords[] = {"time", "timing", "hours", "open"};
+    char *fees_keywords[] = {"fees", "fee", "tuition", "cost", "payment", "price"};
+    char *course_keywords[] = {"course", "courses", "program", "study"};
+    char *contact_keywords[] = {"contact", "phone", "call", "number"};
+    char *location_keywords[] = {"location", "address", "where"};
+    char *admission_keywords[] = {"admission", "apply", "enroll"};
+    char *hostel_keywords[] = {"hostel", "accommodation", "stay"};
+    char *placement_keywords[] = {"placement", "job", "career"};
+    char *faculty_keywords[] = {"faculty", "teacher", "professor"};
+
+    printf("Smart FAQ Chatbot (type 'exit' to quit)\n\n");
+
+    while(1) {
+        printf("You: ");
+        fgets(input, sizeof(input), stdin);
+        input[strcspn(input, "\n")] = 0;
+
+        toLowerCase(input);
+
+        if(strcmp(input, "exit") == 0) {
+            printf("Chatbot: Goodbye!\n");
+            break;
+        }
+
+        // 🔹 Matching using synonym groups
+        if(containsKeyword(input, timing_keywords, 4)) {
+            printf("Chatbot: Institute timings are 9 AM to 5 PM.\n");
+        }
+        else if(containsKeyword(input, fees_keywords, 6)) {
+            printf("Chatbot: Fees range from ₹20,000 to ₹50,000 depending on the course.\n");
+        }
+        else if(containsKeyword(input, course_keywords, 4)) {
+            printf("Chatbot: We offer CS, AI, Data Science, and Cybersecurity courses.\n");
+        }
+        else if(containsKeyword(input, contact_keywords, 4)) {
+            printf("Chatbot: Contact us at +91-9876543210.\n");
+        }
+        else if(containsKeyword(input, location_keywords, 3)) {
+            printf("Chatbot: We are located in Pune, Maharashtra.\n");
+        }
+        else if(containsKeyword(input, admission_keywords, 3)) {
+            printf("Chatbot: Admissions are currently open.\n");
+        }
+        else if(containsKeyword(input, hostel_keywords, 3)) {
+            printf("Chatbot: Hostel facilities are available.\n");
+        }
+        else if(containsKeyword(input, placement_keywords, 3)) {
+            printf("Chatbot: We provide placement assistance.\n");
+        }
+        else if(containsKeyword(input, faculty_keywords, 3)) {
+            printf("Chatbot: Our faculty is highly experienced.\n");
+        }
+        else {
+            printf("Chatbot: Sorry, I didn't understand your question.\n");
+        }
+    }
+
+    return 0;
+}
