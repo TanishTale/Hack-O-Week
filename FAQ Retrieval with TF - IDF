@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include <ctype.h>
+
+#define MAX_DOCS 10
+#define MAX_WORDS 100
+#define MAX_LEN 200
+
+// Sample FAQs
+char *questions[MAX_DOCS] = {
+    "what are the fees",
+    "what is the timing of institute",
+    "where is the institute located",
+    "how to contact institute",
+    "what courses are offered"
+};
+
+char *answers[MAX_DOCS] = {
+    "Fees range from ₹20,000 to ₹50,000.",
+    "Institute timing is 9 AM to 5 PM.",
+    "We are located in Pune.",
+    "Call us at +91-9876543210.",
+    "We offer CS, AI, and Data Science courses."
+};
+
+int doc_count = 5;
+
+// Vocabulary
+char vocab[MAX_WORDS][50];
+int vocab_size = 0;
+
+// Convert to lowercase
+void toLower(char *str) {
+    for(int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
+// Tokenize and build vocabulary
+void buildVocab() {
+    char temp[MAX_LEN];
+    for(int i = 0; i < doc_count; i++) {
+        strcpy(temp, questions[i]);
+        char *token = strtok(temp, " ");
+        while(token) {
+            int found = 0;
+            for(int j = 0; j < vocab_size; j++) {
+                if(strcmp(vocab[j], token) == 0) {
+                    found = 1;
+                    break;
+                }
+            }
+            if(!found) {
+                strcpy(vocab[vocab_size++], token);
+            }
+            token = strtok(NULL, " ");
+        }
+    }
+}
+
+// Term Frequency
+float tf(char *doc, char *word) {
+    int count = 0, total = 0;
+    char temp[MAX_LEN];
+    strcpy(temp, doc);
+
+    char *token = strtok(temp, " ");
+    while(token) {
+        total++;
+        if(strcmp(token, word) == 0)
+            count++;
+        token = strtok(NULL, " ");
+    }
+    return (float)count / total;
+}
+
+// Document Frequency
+int df(char *word) {
+    int count = 0;
+    for(int i = 0; i < doc_count; i++) {
+        if(strstr(questions[i], word))
+            count++;
+    }
+    return count;
+}
+
+// IDF
+float idf(char *word) {
+    return log((float)doc_count / (1 + df(word)));
+}
+
+// TF-IDF vector
+void computeVector(char *doc, float vec[]) {
+    for(int i = 0; i < vocab_size; i++) {
+        vec[i] = tf(doc, vocab[i]) * idf(vocab[i]);
+    }
+}
+
+// Cosine similarity
+float cosine(float v1[], float v2[]) {
+    float dot = 0, mag1 = 0, mag2 = 0;
+
+    for(int i = 0; i < vocab_size; i++) {
+        dot += v1[i] * v2[i];
+        mag1 += v1[i] * v1[i];
+        mag2 += v2[i] * v2[i];
+    }
+
+    if(mag1 == 0 || mag2 == 0) return 0;
+    return dot / (sqrt(mag1) * sqrt(mag2));
+}
+
+int main() {
+    char query[MAX_LEN];
+
+    buildVocab();
+
+    printf("TF-IDF Chatbot (type 'exit' to quit)\n\n");
+
+    while(1) {
+        printf("You: ");
+        fgets(query, sizeof(query), stdin);
+        query[strcspn(query, "\n")] = 0;
+
+        toLower(query);
+
+        if(strcmp(query, "exit") == 0) break;
+
+        float query_vec[MAX_WORDS];
+        computeVector(query, query_vec);
+
+        float max_sim = 0;
+        int best_index = -1;
+
+        for(int i = 0; i < doc_count; i++) {
+            float doc_vec[MAX_WORDS];
+            computeVector(questions[i], doc_vec);
+
+            float sim = cosine(query_vec, doc_vec);
+
+            if(sim > max_sim) {
+                max_sim = sim;
+                best_index = i;
+            }
+        }
+
+        if(best_index != -1) {
+            printf("Chatbot: %s\n", answers[best_index]);
+        } else {
+            printf("Chatbot: Sorry, I don't understand.\n");
+        }
+    }
+
+    return 0;
+}
